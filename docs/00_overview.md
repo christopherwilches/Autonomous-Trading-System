@@ -1,4 +1,4 @@
-# System Overview
+# 00 System Overview
 
 This project is an experimental research system designed to study how algorithmic trading strategies behave over time, rather than how they perform in a single, isolated test.
 
@@ -33,6 +33,39 @@ At each stage:
 Instead of treating algorithms independently, the system explores **group-level behavior**, testing whether combinations of strategies reinforce or cancel each other out. This allows it to identify sets of algorithms that perform more consistently together than any single strategy alone.
 
 The system continuously learns from its own results. Each cycle feeds into the next, allowing improvements to compound gradually during each training week rather than relying on large, risky changes.
+
+---
+
+## Algorithm families used
+
+The system does not rely on a single strategy type.  
+Instead, it evaluates and combines multiple algorithm families, each designed to capture a different market behavior to make a holistic quantiative choice on which tickers to buy.
+
+The current implementation includes the follwing 10 algorithms:
+
+- **Momentum and trend-following algorithms**  
+  Designed to capture continuation when price strength persists under sufficient liquidity  
+  (e.g., EMA, MACD, EMA–MACD).
+
+- **Mean-reversion and range-based algorithms**  
+  Target temporary price dislocations that statistically revert over short horizons  
+  (e.g., RSI, Bollinger Bands, RSI–Bollinger combinations).
+
+- **Breakout and volatility-sensitive algorithms**  
+  Detect regime shifts, expansions, or compressions where price behavior changes rapidly  
+  (e.g., Breakout, Volatility-based strategies).
+
+- **Smoothing and baseline filters**  
+  Used to reduce noise and stabilize signals across different market conditions  
+  (e.g., SMA-based logic).
+
+- **Trend strength and regime-filtering algorithms**  
+  Measure whether the market is trending or range-bound, allowing other strategies to activate or stand down accordingly  
+  (e.g., ADX).
+
+Each algorithm is intentionally simple in isolation, focusing on one aspect of a stock. Each algorithm is made up hundreds of individual formulas, all contributing to the final decision on whether to buy or not.
+
+All of these algorithms currently exist in Excel, and can be tuned using parameter tables custom-made in Excel.
 
 ---
 
