@@ -18,9 +18,7 @@ Notes:
 - API keys, base URL, and DB path are redacted in the public repo.
 """
 
-# ==========================
-# ALPACA INTRADAY DICTIONARY BUILDER
-# ==========================
+# Alpaca intraday dictionary builder
 
 from typing import List, Tuple
 import requests
@@ -32,11 +30,9 @@ import threading
 
 from alpaca_trade_api import REST
 from alpaca_trade_api.rest import TimeFrame
-import pandas as pd  # used via .df from get_bars
+import pandas as pd 
 
-# ==========================
-# CONFIG
-# ==========================
+# Config
 
 # ===== ALPACA MARKET DATA CONFIG FOR MP1 =====
 ALPACA_API_KEY = ""
@@ -61,14 +57,10 @@ SEEDLING_CUTOFF = 2.0
 from zoneinfo import ZoneInfo
 NY_TZ = ZoneInfo("America/New_York")
 
-# ==========================
-# HELPER FUNCTIONS
-# ==========================
+# Helpers
 
 def get_alpaca_rest() -> REST:
-    """Return an Alpaca REST client."""
     return REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL)
-
 
 def fetch_alpaca_assets():
     url = f"{ALPACA_BASE_URL}/v2/assets?status=active"
@@ -84,7 +76,7 @@ def fetch_alpaca_assets():
         print(f"[ERROR] fetch_alpaca_assets failed: {e}")
         return []
 
-# Nuclear keyword filter for non-stocks (funds, ETFs, REITs, notes, units, etc.)
+# Keyword filter for non-stocks
 NAME_EXCLUDE_KEYWORDS = [
     " etf ",
     " etn ",
@@ -121,17 +113,6 @@ NAME_EXCLUDE_KEYWORDS = [
 
 
 def is_clean_common_stock(asset: dict) -> bool:
-    """
-    Aggressive filter to keep only "normal" US stocks.
-
-    Conditions:
-      - class == 'us_equity'
-      - status == 'active'
-      - exchange != 'OTC'
-      - symbol is pure A–Z
-      - name does NOT contain common fund/ETF/REIT keywords
-      - name does NOT start with big ETF families (SPDR, iShares, Vanguard, etc.)
-    """
     sym = asset.get("symbol")
     exch = asset.get("exchange")
     status = asset.get("status")
@@ -141,7 +122,7 @@ def is_clean_common_stock(asset: dict) -> bool:
     if not sym or not isinstance(sym, str):
         return False
 
-    # Only US common equities, no crypto, options, etc.
+    # Only US common equities
     if asset_class != "us_equity":
         return False
 
@@ -153,7 +134,7 @@ def is_clean_common_stock(asset: dict) -> bool:
     if exch == "OTC":
         return False
 
-    # Only alphabetic tickers (no dots, hyphens, etc.)
+    # Only alphabetic tickers
     if not sym.isalpha():
         return False
 
@@ -170,8 +151,6 @@ def is_clean_common_stock(asset: dict) -> bool:
         ("SPDR", "ISHARES", "VANGUARD", "INVESCO", "PROSHARES", "GLOBAL X", "DIREXION")
     ):
         return False
-
-    # Very long symbols with fundy names are almost always not plain stocks
     sym_len = len(sym)
     if sym_len > 5 and (
         "FUND" in name_upper or "TRUST" in name_upper or "ETF" in name_upper
@@ -181,7 +160,6 @@ def is_clean_common_stock(asset: dict) -> bool:
     return True
 
 def chunk_list(lst: List[Tuple[str, str]], n_chunks: int) -> List[List[Tuple[str, str]]]:
-    """Split lst into n_chunks (roughly equal sized) for workers."""
     if n_chunks <= 1 or len(lst) == 0:
         return [lst]
     chunk_size = (len(lst) + n_chunks - 1) // n_chunks
@@ -235,10 +213,7 @@ def _make_53row_block(sym: str, name: str, window: pd.DataFrame) -> list:
 
     return block_rows
 
-# ==========================
-# INTRADAY DICTIONARY BUILDER:
-# DICTIONARY_TABLE + SEEDLING_TABLE
-# ==========================
+# Tables + builder
 
 def _create_dictionary_tables(conn: sqlite3.Connection):
     cur = conn.cursor()
@@ -318,7 +293,6 @@ def build_alpaca_intraday_dictionary(
     CALENDAR_LOOKBACK_INTRADAY = 70 
     MIN_DAYS = 31
     OFFSET = 0 
-
 
     end_dt = datetime.now(timezone.utc)
     start_dt = end_dt - timedelta(days=CALENDAR_LOOKBACK_INTRADAY)
@@ -467,5 +441,3 @@ if __name__ == "__main__":
     build_alpaca_intraday_dictionary()
     end_t = time.time()
     print(f"[TIMER] Program took {end_t - start_t:.2f} seconds.")
-
-
