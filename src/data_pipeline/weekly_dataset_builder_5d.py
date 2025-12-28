@@ -19,10 +19,7 @@ Privacy:
 - API keys, base URL, and DB path are redacted in the public repo.
 """
 
-
-# ==========================
-# SHARED ALPACA CONFIG & HELPERS
-# ==========================
+# Alpaca config / helpers
 
 from typing import List, Tuple
 import requests
@@ -83,7 +80,6 @@ def get_alpaca_rest() -> REST:
     return REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL)
 
 def fetch_alpaca_assets():
-    """Fetch Alpaca /v2/assets and return JSON list."""
     url = f"{ALPACA_BASE_URL}/v2/assets?status=active"
     headers = {
         "APCA-API-KEY-ID": ALPACA_API_KEY,
@@ -98,9 +94,7 @@ def fetch_alpaca_assets():
         return []
 
 def is_clean_common_stock(asset: dict) -> bool:
-    """
-    Aggressive filter to keep only "normal" US stocks.
-    """
+    # Stock universe filter
     sym = asset.get("symbol")
     exch = asset.get("exchange")
     status = asset.get("status")
@@ -149,11 +143,6 @@ def chunk_list(lst: List[Tuple[str, str]], n_chunks: int) -> List[List[Tuple[str
     return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
 
 def drop_incomplete_today_daily_bar(bars: pd.DataFrame) -> pd.DataFrame:
-    """
-    If we are during regular session (New York time) and the newest
-    daily bar is stamped with today's NY date, treat it as incomplete
-    and drop it, so we only use fully closed days.
-    """
     if bars is None or bars.empty:
         return bars
 
@@ -177,17 +166,9 @@ def drop_incomplete_today_daily_bar(bars: pd.DataFrame) -> pd.DataFrame:
     return bars
 
 def _make_53row_block(sym: str, name: str, window: pd.DataFrame) -> list:
-    """
-    Build a 53-row MP1-style block from a 31-row window.
-    window MUST be newest→oldest and length 31.
-    Returns list of 53 tuples for executemany.
-    """
     block_rows = []
-
-    # row 0: completely blank
     block_rows.append(("", "", "", "", "", "", "", ""))
 
-    # row 1: header row
     use_name = name or sym
     block_rows.append(
         (
@@ -238,10 +219,7 @@ def _make_53row_block(sym: str, name: str, window: pd.DataFrame) -> list:
 
     return block_rows
 
-
-# ==========================
-# TABLE CREATION + DS BUILDERS
-# ==========================
+# Table creation / dataset build
 
 def _create_dict_and_ds_tables(conn: sqlite3.Connection, num_days: int):
     cur = conn.cursor()
@@ -297,7 +275,6 @@ def _create_dict_and_ds_tables(conn: sqlite3.Connection, num_days: int):
 
     conn.commit()
 
-
 def _extract_block_ticker(blk: pd.DataFrame) -> str:
     ser = blk["Ticker_name"].fillna("").astype(str).str.strip()
     for t in ser:
@@ -305,13 +282,7 @@ def _extract_block_ticker(blk: pd.DataFrame) -> str:
             return t
     return ""
 
-
 def _build_datasets_from_dicts(conn: sqlite3.Connection, num_days: int, dataset_size: int):
-    """
-    From DICT_DAY1..NUM_DAYS, build:
-      - DATASET_TICKERS (intersection only, no extra filters)
-      - DS_DAY1..NUM_DAYS with full 53-row blocks in consistent order.
-    """
     cur = conn.cursor()
     dict_tables = [f"DICT_DAY{i}" for i in range(1, num_days + 1)]
 
@@ -565,13 +536,11 @@ def build_alpaca_5day_dicts_and_datasets(
     conn.close()
     print("=== build_alpaca_5day_dicts_and_datasets COMPLETE ===")
 
-# ==========================
 # ALPACA DICTIONARY FILLER END
-# ==========================
+
 if __name__ == "__main__":
     import time
     start_5day = time.time()
     build_alpaca_5day_dicts_and_datasets()
     end_5day = time.time()
     print(f"[TIMER] Program took {end_5day - start_5day:.2f} seconds.")
-
