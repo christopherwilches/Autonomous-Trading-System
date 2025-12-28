@@ -1,17 +1,13 @@
-# ================================================================
-# MP1 — PART 1 (5-Day Variation Test Runner)
-# ------------------------------------------------
-# Purpose:
-# - Loads DS_DAY1..DS_DAY5 from stocks_data.db in batch windows
-# - Pastes each batch into the Excel ControlSheet staging area
-# - Triggers the workbook’s cycling macro (S1) and waits for completion (O1)
-# - Extracts per-algorithm / per-variation BUY + HIT outcomes from each algo sheet
-# - Writes Day1..Day5 results and 5-day stability metrics into optuna_data.db
-#
-# Notes:
-# - Excel is the compute engine (trade logic + profit labeling live in the workbook)
-# - Python is the orchestrator (data feed, macro handshake, extraction, DB writes)
-# ================================================================
+"""
+MP1 — Part 1: 5-day variation execution runner
+
+Runs each algorithm variation over 5 trading days using Excel as the execution engine.
+Python feeds stock data into the workbook, triggers the cycle macro, extracts BUY/HIT
+results, and writes daily + 5-day aggregated metrics to the Optuna database.
+
+Input: stock datasets (DB), Excel workbook
+Output: per-variation performance records in optuna_data.db
+"""
 
 import json
 import math
