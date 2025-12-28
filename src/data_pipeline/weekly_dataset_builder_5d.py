@@ -35,34 +35,27 @@ import threading
 from alpaca_trade_api import REST
 from alpaca_trade_api.rest import TimeFrame
 import pandas as pd
-from zoneinfo import ZoneInfo  # NEW
+from zoneinfo import ZoneInfo 
 
-NY_TZ = ZoneInfo("America/New_York")  # NEW: use NY market time
+NY_TZ = ZoneInfo("America/New_York")
 
-# ========= GLOBAL TOGGLES (EDIT THESE ONLY) =========
+# ========= GLOBAL TOGGLES =========
 
 ALPACA_API_KEY    = ""
 ALPACA_API_SECRET = ""
 ALPACA_BASE_URL   = ""
 DB_PATH           = ""
 
-USE_SIP       = True   # True = SIP (paid, NBBO), False = IEX (free)
-LIMIT_TESTED  = False    # True = cap symbol tests at TESTED_CAP
-TESTED_CAP    = 100     # max symbols to test when LIMIT_TESTED is True
+USE_SIP = True
+LIMIT_TESTED = False
+TESTED_CAP = 100
 
-NUM_DAYS      = 5       # number of “day windows” for 5-day builder
-N_WORKERS     = 4       # threads for API calls
+NUM_DAYS = 5
+N_WORKERS = 4
 
-# How many daily bars we actually need:
-# 31-day window *shifted* NUM_DAYS-1 times: 31 + (NUM_DAYS - 1)
 BARS_REQUIRED = 31 + (NUM_DAYS - 1)
-# >>> FIXED HERE <<<
-# Use a long enough calendar lookback so we actually get >= BARS_REQUIRED trading days.
-# For NUM_DAYS=5 -> BARS_REQUIRED=35, CALENDAR_LOOKBACK=65 (similar to your old working code).
+
 CALENDAR_LOOKBACK = max(65, BARS_REQUIRED + 30)
-
-
-# ========= PRICE/VOLUME FILTERS (SHARED) =========
 
 PRICE_MIN   = 10.0
 PRICE_MAX   = 90.0
@@ -86,10 +79,8 @@ ETF_FAMILIES = (
     "PROSHARES", "GLOBAL X", "DIREXION"
 )
 
-
 def get_alpaca_rest() -> REST:
     return REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL)
-
 
 def fetch_alpaca_assets():
     """Fetch Alpaca /v2/assets and return JSON list."""
@@ -105,7 +96,6 @@ def fetch_alpaca_assets():
     except Exception as e:
         print(f"[ERROR] fetch_alpaca_assets failed: {e}")
         return []
-
 
 def is_clean_common_stock(asset: dict) -> bool:
     """
@@ -180,11 +170,9 @@ def drop_incomplete_today_daily_bar(bars: pd.DataFrame) -> pd.DataFrame:
     now_ny = datetime.now(NY_TZ)
     today_ny = now_ny.date()
 
-    # Weekdays only; on weekends there is no "today" bar to worry about
     if now_ny.weekday() < 5:
-        # Before 4:00 PM NY time, today's bar is considered incomplete
         if now_ny.hour < 16 and first_day_ny == today_ny:
-            return bars.iloc[1:]  # drop newest row
+            return bars.iloc[1:]  
 
     return bars
 
@@ -245,7 +233,6 @@ def _make_53row_block(sym: str, name: str, window: pd.DataFrame) -> list:
             )
         )
 
-    # pad with blank rows until 53
     while len(block_rows) < 53:
         block_rows.append(("", "", "", "", "", "", "", ""))
 
@@ -369,8 +356,7 @@ def _build_datasets_from_dicts(conn: sqlite3.Connection, num_days: int, dataset_
     for day_idx, tbl in enumerate(dict_tables, start=1):
         ds_name = f"DS_DAY{day_idx}"
         df = pd.read_sql_query(f"SELECT * FROM {tbl}", conn)
-
-        # Build index: ticker -> first block start row
+      
         idx_map = {}
         total_rows = len(df)
         for start in range(0, total_rows, 53):
@@ -439,7 +425,7 @@ def build_alpaca_5day_dicts_and_datasets(
 
     random.shuffle(universe_symbols)
 
-    # Time range (uses last completed trading days only via daily bars)
+    # Time range
     end_dt = datetime.now(timezone.utc)
     start_dt = end_dt - timedelta(days=CALENDAR_LOOKBACK)
 
@@ -541,13 +527,12 @@ def build_alpaca_5day_dicts_and_datasets(
                     break
                 continue
 
-            # NOTE: we don't apply LIMIT_TESTED to writing queue; only to fetching
             with progress_lock:
                 shared["saved"] += 1
 
             for day_idx in range(1, NUM_DAYS + 1):
                 tbl = f"DICT_DAY{day_idx}"
-                offset = NUM_DAYS - day_idx   # last table uses offset 0 (newest)
+                offset = NUM_DAYS - day_idx 
                 window = bars.iloc[offset: offset + 31]
                 if len(window) < 31:
                     continue
@@ -575,7 +560,6 @@ def build_alpaca_5day_dicts_and_datasets(
         f"tested={shared['tested']} passing={shared['passing']} saved={shared['saved']}"
     )
 
-    # Now build DS_DAY tables purely from intersection (no extra filters)
     _build_datasets_from_dicts(conn, NUM_DAYS, dataset_size)
 
     conn.close()
@@ -586,10 +570,8 @@ def build_alpaca_5day_dicts_and_datasets(
 # ==========================
 if __name__ == "__main__":
     import time
-
     start_5day = time.time()
     build_alpaca_5day_dicts_and_datasets()
     end_5day = time.time()
-
     print(f"[TIMER] Program took {end_5day - start_5day:.2f} seconds.")
 
