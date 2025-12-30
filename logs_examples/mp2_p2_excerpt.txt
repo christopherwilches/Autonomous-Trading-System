@@ -1,0 +1,197 @@
+[MP2] Part 2 — Group tester starting...
+
+[HB 00] <TIMESTAMP_REDACTED> | +0:00:00 since start | TOTAL_RAM=15.89GB USED=6.41GB FREE=9.49GB | TAG=BASELINE
+
+[ Global day baseline from DS_DAY# first rows]
+  Day 1: base_wr=25.90%   weight=1.302
+  Day 2: base_wr=40.30%   weight=1.014
+  Day 3: base_wr=44.90%   weight=0.922
+  Day 4: base_wr=38.10%   weight=1.058
+  Day 5: base_wr=55.80%   weight=0.704
+
+
+Selecting ALL variations as thread starters (exhaustive coverage)...
+Mixed ordering applied. First tickers=13, Last tickers=2948 | specials at end: [0, 1, 3]
+[init] tasks=1256 | workers=4 | batches=314 | base_limit=275.159s
+[ Timer] Pre-thread logic done. Time elapsed: 5.85 seconds
+
+Starting 1256 starters with a 4-worker pool...
+
+
+[ Thread 1 START] No.6.1 | PP=84.62% | T=13 | limit_start=275.16s
+
+[ Thread 2 START] No.6.6 | PP=76.92% | T=13 | limit_start=275.16s
+
+[ Thread 3 START] No.6.29 | PP=50.00% | T=14 | limit_start=275.16s
+
+[ Thread 4 START] No.6.3 | PP=60.00% | T=15 | limit_start=275.16s
+
+[ Thread 1 END] No.6.1 | done | dur=0.01s | attempts=274 | limit_start=275.16s | limit_end=275.16s | PP=84.62% | T=13 | TopK_adds(size3=0, size4=0)
+
+[ Thread 2 END] No.6.6 | done | dur=0.02s | attempts=272 | limit_start=275.16s | limit_end=275.16s | PP=76.92% | T=13 | TopK_adds(size3=0, size4=0)
+
+[ Thread 3 END] No.6.29 | done | dur=0.03s | attempts=237 | limit_start=275.16s | limit_end=275.16s | PP=50.00% | T=14 | TopK_adds(size3=0, size4=0)
+
+[ Thread 4 END] No.6.3 | done | dur=0.03s | attempts=260 | limit_start=275.16s | limit_end=275.16s | PP=60.00% | T=15 | TopK_adds(size3=0, size4=0)
+[ limit] banked 275.151s from thread 1 | applied_total 165.091s (per-task +0.132s) | limit 275.159→275.291 | bank_left=110.060s
+
+[ Thread 5 START] No.6.9 | PP=62.50% | T=16 | limit_start=275.29s
+[ limit] banked 275.140s from thread 2 | applied_total 231.120s (per-task +0.184s) | limit 275.291→275.475 | bank_left=154.080s
+
+[ Thread 6 START] No.6.5 | PP=58.82% | T=17 | limit_start=275.48s
+[ limit] banked 275.133s from thread 3 | applied_total 257.528s (per-task +0.206s) | limit 275.475→275.681 | bank_left=171.685s
+
+[ Thread 7 START] No.6.17 | PP=61.11% | T=18 | limit_start=275.68s
+[ limit] banked 275.127s from thread 4 | applied_total 268.088s (per-task +0.214s) | limit 275.681→275.895 | bank_left=178.725s
+
+[ Thread 8 START] No.6.22 | PP=55.56% | T=18 | limit_start=275.89s
+
+[ Thread 5 END] No.6.9 | done | dur=0.01s | attempts=277 | limit_start=275.29s | limit_end=275.89s | PP=62.50% | T=16 | TopK_adds(size3=0, size4=0)
+
+[ Thread 6 END] No.6.5 | done | dur=0.01s | attempts=249 | limit_start=275.48s | limit_end=275.89s | PP=58.82% | T=17 | TopK_adds(size3=0, size4=0)
+
+[ Thread 7 END] No.6.17 | done | dur=0.02s | attempts=257 | limit_start=275.68s | limit_end=275.89s | PP=61.11% | T=18 | TopK_adds(size3=0, size4=0)
+
+[ Thread 8 END] No.6.22 | done | dur=0.03s | attempts=251 | limit_start=275.89s | limit_end=275.89s | PP=55.56% | T=18 | TopK_adds(size3=0, size4=0)
+[ limit] banked 275.885s from thread 5 | applied_total 272.766s (per-task +0.218s) | limit 275.895→276.113 | bank_left=181.844s
+
+[ Thread 9 START] No.6.26 | PP=50.00% | T=18 | limit_start=276.11s
+[ limit] banked 275.880s from thread 6 | applied_total 274.634s (per-task +0.220s) | limit 276.113→276.332 | bank_left=183.089s
+
+[ Thread 10 START] No.6.4 | PP=61.11% | T=18 | limit_start=276.33s
+[ limit] banked 275.873s from thread 7 | applied_total 275.377s (per-task +0.220s) | limit 276.332→276.553 | bank_left=183.585s
+
+[ Thread 11 START] No.9.23 | PP=52.63% | T=19 | limit_start=276.55s
+[ limit] banked 275.867s from thread 8 | applied_total 275.671s (per-task +0.221s) | limit 276.553→276.774 | bank_left=183.781s
+
+[ Thread 12 START] No.6.19 | PP=60.00% | T=20 | limit_start=276.77s
+
+[ Thread 9 END] No.6.26 | done | dur=0.01s | attempts=251 | limit_start=276.11s | limit_end=276.77s | PP=50.00% | T=18 | TopK_adds(size3=0, size4=0)
+
+[ Thread 10 END] No.6.4 | done | dur=0.01s | attempts=253 | limit_start=276.33s | limit_end=276.77s | PP=61.11% | T=18 | TopK_adds(size3=0, size4=0)
+
+
+[...]
+
+
+[ Thread 1246 START] No.2.181 | PP=40.60% | T=2515 | limit_start=1052.81s
+
+[ Thread 1243 END] No.2.208 | timeout | dur=1052.81s | attempts=1467870 | limit_start=1052.81s | limit_end=1052.81s | PP=39.15% | T=2406 | TopK_adds(size3=0, size4=0)
+
+[ Thread 1247 START] No.2.177 | PP=40.77% | T=2610 | limit_start=1052.81s
+
+[HB 139] <TIMESTAMP_REDACTED> | +23:10:09 since start | TOTAL_RAM=15.89GB USED=6.89GB FREE=9.01GB | LIMIT=1052.81s | DONE=1243 LEFT=13 | TAG=CHECKPOINT
+
+[ Thread 1244 END] No.2.205 | timeout | dur=1052.81s | attempts=1444722 | limit_start=1052.81s | limit_end=1052.81s | PP=38.96% | T=2459 | TopK_adds(size3=0, size4=0)
+
+[ Thread 1248 START] No.1.92 | PP=37.87% | T=2614 | limit_start=1052.81s
+
+[ Thread 1245 END] No.2.204 | timeout | dur=1052.81s | attempts=1445640 | limit_start=1052.81s | limit_end=1052.81s | PP=39.08% | T=2510 | TopK_adds(size3=1, size4=31)
+
+[ Thread 1249 START] No.2.202 | PP=38.90% | T=2658 | limit_start=1052.81s
+
+[HB 140] <TIMESTAMP_REDACTED> | +23:20:09 since start | TOTAL_RAM=15.89GB USED=6.86GB FREE=9.03GB | LIMIT=1052.81s | DONE=1245 LEFT=11 | TAG=CHECKPOINT
+
+[ Thread 1246 END] No.2.181 | timeout | dur=1052.81s | attempts=1490298 | limit_start=1052.81s | limit_end=1052.81s | PP=40.60% | T=2515 | TopK_adds(size3=0, size4=17)
+
+[ Thread 1250 START] No.2.170 | PP=40.81% | T=2676 | limit_start=1052.81s
+
+[ Thread 1247 END] No.2.177 | timeout | dur=1052.81s | attempts=1481070 | limit_start=1052.81s | limit_end=1052.81s | PP=40.77% | T=2610 | TopK_adds(size3=0, size4=19)
+
+[ Thread 1251 START] No.2.186 | PP=40.42% | T=2739 | limit_start=1052.81s
+
+[HB 141] <TIMESTAMP_REDACTED> | +23:30:09 since start | TOTAL_RAM=15.89GB USED=6.84GB FREE=9.05GB | LIMIT=1052.81s | DONE=1247 LEFT=9 | TAG=CHECKPOINT
+
+[ Thread 1248 END] No.1.92 | timeout | dur=1052.81s | attempts=1475890 | limit_start=1052.81s | limit_end=1052.81s | PP=37.87% | T=2614 | TopK_adds(size3=0, size4=0)
+
+[ Thread 1252 START] No.2.194 | PP=39.89% | T=2775 | limit_start=1052.81s
+
+[ Thread 1249 END] No.2.202 | timeout | dur=1052.81s | attempts=1449927 | limit_start=1052.81s | limit_end=1052.81s | PP=38.90% | T=2658 | TopK_adds(size3=0, size4=20)
+
+[ Thread 1253 START] No.2.191 | PP=39.84% | T=2796 | limit_start=1052.81s
+
+[ Thread 1250 END] No.2.170 | timeout | dur=1052.81s | attempts=1472305 | limit_start=1052.81s | limit_end=1052.81s | PP=40.81% | T=2676 | TopK_adds(size3=0, size4=19)
+
+[ Thread 1254 START] No.2.187 | PP=39.98% | T=2829 | limit_start=1052.81s
+
+[ Thread 1251 END] No.2.186 | timeout | dur=1052.81s | attempts=1447457 | limit_start=1052.81s | limit_end=1052.81s | PP=40.42% | T=2739 | TopK_adds(size3=0, size4=0)
+
+[ Thread 1255 START] No.2.189 | PP=39.87% | T=2892 | limit_start=1052.81s
+
+[HB 142] <TIMESTAMP_REDACTED> | +23:40:09 since start | TOTAL_RAM=15.89GB USED=6.66GB FREE=9.23GB | LIMIT=1052.81s | DONE=1251 LEFT=5 | TAG=CHECKPOINT
+
+[HB 143] <TIMESTAMP_REDACTED> | +23:50:09 since start | TOTAL_RAM=15.89GB USED=6.60GB FREE=9.29GB | LIMIT=1052.81s | DONE=1251 LEFT=5 | TAG=CHECKPOINT
+
+[ Thread 1252 END] No.2.194 | timeout | dur=1052.81s | attempts=1390422 | limit_start=1052.81s | limit_end=1052.81s | PP=39.89% | T=2775 | TopK_adds(size3=0, size4=0)
+
+[ Thread 1256 START] No.2.193 | PP=39.62% | T=2948 | limit_start=1052.81s
+
+[ Thread 1253 END] No.2.191 | timeout | dur=1052.81s | attempts=1384588 | limit_start=1052.81s | limit_end=1052.81s | PP=39.84% | T=2796 | TopK_adds(size3=1, size4=3)
+
+[ Thread 1254 END] No.2.187 | timeout | dur=1052.81s | attempts=1442625 | limit_start=1052.81s | limit_end=1052.81s | PP=39.98% | T=2829 | TopK_adds(size3=0, size4=3)
+
+[ Thread 1255 END] No.2.189 | timeout | dur=1052.81s | attempts=1481040 | limit_start=1052.81s | limit_end=1052.81s | PP=39.87% | T=2892 | TopK_adds(size3=0, size4=1)
+
+[HB 144] <TIMESTAMP_REDACTED> | +24:00:09 since start | TOTAL_RAM=15.89GB USED=6.63GB FREE=9.26GB | LIMIT=1052.81s | DONE=1255 LEFT=1 | TAG=CHECKPOINT
+
+[ Thread 1256 END] No.2.193 | done | dur=858.38s | attempts=5163902 | limit_start=1052.81s | limit_end=1052.81s | PP=39.62% | T=2948 | TopK_adds(size3=1, size4=0)
+[ limit] banked 194.425s from thread 1256 | applied_total 209.224s (per-task +209.224s) | limit 1052.806→1262.030 | bank_left=139.483s
+[ Timer] Threads finished. Time elapsed: 86873.48 seconds
+[ Timer] TOTAL Time (before + during threads): 86879.34 seconds
+
+[HB 145] <TIMESTAMP_REDACTED> | +24:07:59 since start | TOTAL_RAM=15.89GB USED=6.65GB FREE=9.24GB | LIMIT=1262.03s | DONE=1256 LEFT=0 | TAG=FINAL
+
+[HB_END] SYS=15.89GB USED=6.65GB(41%) FREE=9.24GB USEDΔ=-174.3MB RSS=693.7MB RSSΔ=+11.5MB VMS=770.6MB SWAP=133.9MB P_CPU=0.0% S_CPU=0.0% VAR=1256 AVG_TICK=721.4 S3=1 S4=1 LIMIT=1262.03s DONE=1256 LEFT=0 t+86880s tgt-0s end-85920s
+
+Bell-curve + stability selection for size-3 and size-4 groups...
+size 3: n_raw=71, TopK=71, stab_pool=29, stab_thresh=42.237, mean_score=116.590, sigma=6.418, target=123.007, chosen_score=125.608, pp=60.00, buys=85, pp_avg=61.24, pp_std=10.96, stab_score=44.803
+size 4: n_raw=3179, TopK=1000, stab_pool=406, stab_thresh=45.244, mean_score=138.328, sigma=3.669, target=141.996, chosen_score=143.185, pp=64.00, buys=75, pp_avg=64.34, pp_std=12.71, stab_score=45.273
+
+[ Top-K Algo Usage (by size)]
+ size 3:
+   Algo 1: 1 groups in Top-1000
+   Algo 2: 20 groups in Top-1000
+   Algo 3: 0 groups in Top-1000
+   Algo 4: 23 groups in Top-1000
+   Algo 5: 13 groups in Top-1000
+   Algo 6: 0 groups in Top-1000
+   Algo 7: 45 groups in Top-1000
+   Algo 8: 68 groups in Top-1000
+   Algo 9: 12 groups in Top-1000
+   Algo 10: 31 groups in Top-1000
+ size 4:
+   Algo 1: 0 groups in Top-1000
+   Algo 2: 943 groups in Top-1000
+   Algo 3: 0 groups in Top-1000
+   Algo 4: 992 groups in Top-1000
+   Algo 5: 157 groups in Top-1000
+   Algo 6: 0 groups in Top-1000
+   Algo 7: 1 groups in Top-1000
+   Algo 8: 1000 groups in Top-1000
+   Algo 9: 766 groups in Top-1000
+   Algo 10: 141 groups in Top-1000
+
+[ Algo Run Stats]
+Algo | Variations | Timeouts | Total(s) | Avg_PP | Avg_Tickers
+-----+------------+----------+----------+--------+------------
+   1 |        250 |       56 | 74436.39 |  38.48 |     485.32
+   2 |        250 |      177 | 192938.57 |  40.68 |     868.02
+   3 |        100 |        3 | 10357.51 |  45.11 |     466.53
+   4 |         56 |       31 | 46339.46 |  41.98 |     906.27
+   5 |        100 |       10 | 17164.65 |  39.76 |     712.82
+   6 |        100 |        0 |  1106.55 |  43.62 |     156.43
+   7 |        100 |        0 |  2711.25 |  39.69 |     979.67
+   8 |        100 |        0 |   150.09 |  42.96 |     788.04
+   9 |        100 |        0 |     6.02 |  46.97 |     799.87
+  10 |        100 |        0 |     0.40 |  43.71 |    1266.98
+
+Exporting best-by-size (3..4) to GE7...
+Total groups evaluated (counter) = 79800109
+
+[ BUCKET SUMMARY] (disabled in exhaustive mode)
+MP2 - Part 2 took 24h 8m 7s
+
+ [FINAL TIMING SUMMARY]
+TOTAL TIME for MP1 - Part 3 took 0h 3m 2s
+TOTAL TIME for MP2 - Part 2 took 24h 8m 7s
+OVERALL TIME took 24h 11m 9s
