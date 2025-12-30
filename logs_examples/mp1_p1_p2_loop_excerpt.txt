@@ -45,10 +45,10 @@
 [DEBUG] Day 5: results recorded OK
 [DEBUG] Day 5: AE1 clear OK
  P1 complete: 5-day run finished and saved.
-[] MP1 - Part 1 took 0h 5m 30s
+MP1 - Part 1 took 0h 5m 30s
 [LOOP 1/200] Starting MP1 - Part 2 (Optuna Optimization)...
  P2 complete: DB-scored (5-day) → next 8 params pasted to Excel (UI order).
-[] MP1 - Part 2 took 0h 0m 16s
+MP1 - Part 2 took 0h 0m 16s
 
 [LOOP 2/200] Starting MP1 - Part 1 (Cycling)...
 
@@ -97,10 +97,10 @@
 [DEBUG] Day 5: results recorded OK
 [DEBUG] Day 5: AE1 clear OK
  P1 complete: 5-day run finished and saved.
-[] MP1 - Part 1 took 0h 5m 30s
+MP1 - Part 1 took 0h 5m 30s
 [LOOP 2/200] Starting MP1 - Part 2 (Optuna Optimization)...
  P2 complete: DB-scored (5-day) → next 8 params pasted to Excel (UI order).
-[] MP1 - Part 2 took 0h 0m 16s
+MP1 - Part 2 took 0h 0m 16s
 
 
 [...]
@@ -153,10 +153,10 @@
 [DEBUG] Day 5: results recorded OK
 [DEBUG] Day 5: AE1 clear OK
  P1 complete: 5-day run finished and saved.
-[] MP1 - Part 1 took 0h 5m 36s
+MP1 - Part 1 took 0h 5m 36s
 [LOOP 199/200] Starting MP1 - Part 2 (Optuna Optimization)...
  P2 complete: DB-scored (5-day) → next 8 params pasted to Excel (UI order).
-[] MP1 - Part 2 took 0h 0m 16s
+MP1 - Part 2 took 0h 0m 16s
 
 [LOOP 200/200] Starting MP1 - Part 1 (Cycling)...
 
@@ -205,15 +205,15 @@
 [DEBUG] Day 5: results recorded OK
 [DEBUG] Day 5: AE1 clear OK
  P1 complete: 5-day run finished and saved.
-[] MP1 - Part 1 took 0h 5m 43s
+MP1 - Part 1 took 0h 5m 43s
 [LOOP 200/200] Starting MP1 - Part 2 (Optuna Optimization)...
  P2 complete: DB-scored (5-day) → next 8 params pasted to Excel (UI order).
-[] MP1 - Part 2 took 0h 0m 17s
+MP1 - Part 2 took 0h 0m 17s
 
  [SUMMARY] loop section complete.
-[] TOTAL TIME for loop section took 19h 45m 1s
+TOTAL TIME for loop section took 19h 45m 1s
 
 [FINAL TIMING SUMMARY]
 [AVG] MP1 - Part 1 (Cycling): 337.96 sec avg
 [AVG] MP1 - Part 2 (Optuna): 17.55 sec avg
-[] OVERALL TIME for first-half loop took 19h 51m 45s
+OVERALL TIME for first-half loop took 19h 51m 45s
