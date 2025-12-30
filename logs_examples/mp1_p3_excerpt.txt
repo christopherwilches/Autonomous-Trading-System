@@ -1,0 +1,65 @@
+[MP1] Part 3 — Exporting variations to WB2...
+[P3] Source DB chosen: r"<REDACTED_PATH>/results.db" (algo tables found=10)
+[P3] MACD: fetched=1600 usable_pre_gate=1600
+[P3][diag] MACD: wilson(m/p90)=55.48/62.56  median_pp(m/p90)=59.46/70.59  pp_mad(m/p90)=8.33/14.79  buy_cv(m/p90)=15.27/124.54
+[P3][diag] MACD: gate component passes -> passed_consistency_gate=901, min_daily_hits=1153, buycount_med_5d=1263, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1555, pp_iqr_5d=1557, pp_range_5d=1476, buycount_cv_5d=307, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] MACD: gate_pass=1153 after_dedup=294 cap=250
+[P3] MACD | selected=250 (cap=250)
+[P3] EMA: fetched=1600 usable_pre_gate=1600
+[P3][diag] EMA: wilson(m/p90)=82.5/89.18  median_pp(m/p90)=82.08/87.18  pp_mad(m/p90)=2.84/9.74  buy_cv(m/p90)=24.62/164.38
+[P3][diag] EMA: gate component passes -> passed_consistency_gate=1159, min_daily_hits=1374, buycount_med_5d=1385, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1592, pp_iqr_5d=1588, pp_range_5d=1579, buycount_cv_5d=212, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] EMA: gate_pass=1374 after_dedup=188 cap=250
+[P3] EMA | selected=188 (cap=250)
+[P3] RSI: fetched=1600 usable_pre_gate=1600
+[P3][diag] RSI: wilson(m/p90)=43.4/44.87  median_pp(m/p90)=42.41/47.01  pp_mad(m/p90)=8.16/11.69  buy_cv(m/p90)=19.64/42.22
+[P3][diag] RSI: gate component passes -> passed_consistency_gate=1268, min_daily_hits=1274, buycount_med_5d=1399, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1579, pp_iqr_5d=1595, pp_range_5d=1550, buycount_cv_5d=180, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] RSI: gate_pass=1274 after_dedup=116 cap=100
+[P3] RSI | selected=100 (cap=100)
+[P3] Breakout: fetched=1600 usable_pre_gate=1600
+[P3][diag] Breakout: wilson(m/p90)=56.55/57.1  median_pp(m/p90)=59.4/63.64  pp_mad(m/p90)=2.98/7.49  buy_cv(m/p90)=164.53/173.29
+[P3][diag] Breakout: gate component passes -> passed_consistency_gate=886, min_daily_hits=1189, buycount_med_5d=1376, wilson_lb_5d=1570, median_pp_5d=1600, pp_mad_5d=1587, pp_iqr_5d=1596, pp_range_5d=1594, buycount_cv_5d=223, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] Breakout: gate_pass=1189 after_dedup=49 cap=250
+[P3] Breakout | selected=49 (cap=250)
+[P3] ADX: fetched=1600 usable_pre_gate=1600
+[P3][diag] ADX: wilson(m/p90)=53.59/55.34  median_pp(m/p90)=59.35/61.76  pp_mad(m/p90)=6.22/11.4  buy_cv(m/p90)=5.06/169.9
+[P3][diag] ADX: gate component passes -> passed_consistency_gate=843, min_daily_hits=1060, buycount_med_5d=1155, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1585, pp_iqr_5d=1590, pp_range_5d=1537, buycount_cv_5d=444, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] ADX: gate_pass=1060 after_dedup=1044 cap=100
+[P3] ADX | selected=100 (cap=100)
+[P3] Volatility: fetched=1600 usable_pre_gate=1600
+[P3][diag] Volatility: wilson(m/p90)=0.0/51.01  median_pp(m/p90)=0.0/70.0  pp_mad(m/p90)=0.0/3.19  buy_cv(m/p90)=0.0/95.58
+[P3][diag] Volatility: gate component passes -> passed_consistency_gate=73, min_daily_hits=141, buycount_med_5d=290, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1573, pp_iqr_5d=1509, pp_range_5d=1361, buycount_cv_5d=1216, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] Volatility: gate_pass=139 after_dedup=124 cap=100
+[P3] Volatility | selected=100 (cap=100)
+[P3] SMA: fetched=1600 usable_pre_gate=1600
+[P3][diag] SMA: wilson(m/p90)=77.64/86.13  median_pp(m/p90)=81.25/87.1  pp_mad(m/p90)=4.03/9.71  buy_cv(m/p90)=147.66/160.48
+[P3][diag] SMA: gate component passes -> passed_consistency_gate=1146, min_daily_hits=1506, buycount_med_5d=1528, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1598, pp_iqr_5d=1598, pp_range_5d=1570, buycount_cv_5d=71, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] SMA: gate_pass=1506 after_dedup=124 cap=100
+[P3] SMA | selected=100 (cap=100)
+[P3] Bollinger_Bands: fetched=1600 usable_pre_gate=1600
+[P3][diag] Bollinger_Bands: wilson(m/p90)=56.94/57.93  median_pp(m/p90)=59.81/60.87  pp_mad(m/p90)=2.11/6.1  buy_cv(m/p90)=160.46/167.42
+[P3][diag] Bollinger_Bands: gate component passes -> passed_consistency_gate=1146, min_daily_hits=1344, buycount_med_5d=1369, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1599, pp_iqr_5d=1598, pp_range_5d=1598, buycount_cv_5d=226, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] Bollinger_Bands: gate_pass=1344 after_dedup=143 cap=100
+[P3] Bollinger_Bands | selected=100 (cap=100)
+[P3] EMA_MACD_Combo: fetched=1600 usable_pre_gate=1600
+[P3][diag] EMA_MACD_Combo: wilson(m/p90)=61.68/82.14  median_pp(m/p90)=58.97/100.0  pp_mad(m/p90)=1.67/11.31  buy_cv(m/p90)=21.58/122.47
+[P3][diag] EMA_MACD_Combo: gate component passes -> passed_consistency_gate=728, min_daily_hits=907, buycount_med_5d=1087, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1572, pp_iqr_5d=1473, pp_range_5d=1340, buycount_cv_5d=426, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] EMA_MACD_Combo: gate_pass=906 after_dedup=272 cap=100
+[P3] EMA_MACD_Combo | selected=100 (cap=100)
+[P3] RSI_Bollinger: fetched=1600 usable_pre_gate=1600
+[P3][diag] RSI_Bollinger: wilson(m/p90)=56.37/57.19  median_pp(m/p90)=55.0/59.9  pp_mad(m/p90)=6.61/10.56  buy_cv(m/p90)=126.37/137.24
+[P3][diag] RSI_Bollinger: gate component passes -> passed_consistency_gate=1278, min_daily_hits=1467, buycount_med_5d=1587, wilson_lb_5d=1600, median_pp_5d=1600, pp_mad_5d=1600, pp_iqr_5d=1600, pp_range_5d=1599, buycount_cv_5d=324, repeat_ticker_rate_5d=1600, top_10_ticker_share_5d=1600
+[P3] RSI_Bollinger: gate_pass=1467 after_dedup=128 cap=100
+[P3] RSI_Bollinger | selected=100 (cap=100)
+[EXPORT] MACD: 250 variations pasted.
+[EXPORT] EMA: 188 variations pasted.
+[EXPORT] RSI: 100 variations pasted.
+[EXPORT] Breakout: 49 variations pasted.
+[EXPORT] ADX: 100 variations pasted.
+[EXPORT] Volatility: 100 variations pasted.
+[EXPORT] SMA: 100 variations pasted.
+[EXPORT] Bollinger_Bands: 100 variations pasted.
+[EXPORT] EMA_MACD_Combo: 100 variations pasted.
+[EXPORT] RSI_Bollinger: 100 variations pasted.
+
+[P3 COMPLETE] Exported total variations: 1187 (min 700, max 1300)
+[] MP1 - Part 3 took 0h 1m 33s
