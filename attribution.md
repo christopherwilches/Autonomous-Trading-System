@@ -10,7 +10,7 @@ Publicly available documentation and references were used for learning and verif
 - public descriptions of technical indicators and statistical methods,
 - and standard software libraries and tooling.
 
-Assistive tools were used in later stages to support documentation and refactoring.  
+Assistive tools were used in later stages for help with debugging and formatting.  
 Details are described in `docs/11_limitations_and_future.md` (Section 9).
 
 No proprietary source code or restricted implementations were copied.
