@@ -124,6 +124,24 @@ Examples
 
 ---
 
+### 9) Use of assistive tools (including AI)
+
+This project began in 9th grade, before I had much experience in software engineering, optimization, or large-scale system design.
+I had ideas about what I wanted to build as I experimented and learned, but limited technical background to implement them efficiently.
+
+During later stages of development, assistive tools (including AI-based tools) were used selectively to:
+- help reason through implementation approaches and learn new Python libraries and concepts,
+- sanity-check logic while debugging,
+- and speed up refactoring, formatting, or repetitive coding tasks.
+
+All system design, algorithm choices, architectural structure, and execution flow were decided by the author.
+Assistive outputs were used as reference material and were rewritten, tested, or discarded during implementation.
+
+Even with assistive tools, development remained slow and difficult due to lack of proper training.
+Debugging across Excel, Python, SQLite, and multi-threaded execution required manual iteration, testing, and long-run validation.
+
+---
+
 ## Future upgrades
 
 ### 1) Full rebuild into a black box architecture in Python
