@@ -1,4 +1,4 @@
-# 02_data_pipeline_mp0.md
+# Data Pipeline
 
 ## What this stage does
 This stage builds the weekly dataset used by mp1.
@@ -43,8 +43,8 @@ Completed day rule
 This builder needs enough bars to create 5 shifted windows.
 
 Requirement
-- `BARS_REQUIRED = 31 + (NUM_DAYS - 1)`
-- For 5 days, `BARS_REQUIRED = 35`
+- enough history to support five shifted 31-day windows
+- for a 5-day setup, this requires 35 completed trading days
 
 The script uses a long enough calendar lookback (around ~65 days) so 35 trading days is guaranteed.
 
@@ -58,9 +58,8 @@ Block layout
 - Rows 33–52: blank padding
 
 Details that matter
-- Ticker symbol is written only on the first data row, then blank for the rest of the block
+- The ticker symbol appears only on the first data row, then remains blank for the rest of the block
 - This matches how the workbook slices blocks and stays stable when batching
-
 
 ## DICT_DAY tables
 Tickers that pass the screens get written to `DICT_DAY1..DICT_DAY5`.
@@ -74,7 +73,7 @@ Offset rule
 - `DICT_DAY2` offset 3
 - `DICT_DAY1` offset 4
 
-So each ticker has 5 slightly different data, for each day.
+This gives each ticker five overlapping windows, one for each day.
 
 
 ## Building the weekly dataset (DS tables)
@@ -94,7 +93,3 @@ Important
 ## Runtime and limits
 - Daily bar fetching is multi-threaded (`N_WORKERS = 4`)
 - Typical runtime is about 100–120 seconds depending on API speed
-
-Seedlings
-- `open < 2.0` goes to `SEEDLING_TABLE` only
-- Serves as vestigial table saving low priced stocks, not used
