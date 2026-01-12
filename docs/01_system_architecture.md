@@ -1,19 +1,19 @@
-# 01_system_architecture
+# System Architecture
 
-This section explains how the system is organized at a systems level: what the major components are, what each one consumes and produces, and how the full pipeline runs on a weekly + daily schedule.
+This doc explains how the system is organized: the major components, what each one consumes and produces, and how the pipeline runs on a weekly and daily schedule.
 
-The system has two rhythms:
+The system has two schedules:
 
-- a weekly training and group-selection cycle run on the weekend
-- a daily execution cycle that generates tickers and trades during the following week
+- a weekend training + group-selection run
+- a weekday run that generates tickers and executes trades
 
-The key idea is that the system retrains each week on the most recent 5 trading days, then applies the selected group during the next 5 trading days.
+Each weekend, it trains on the most recent 5 trading days and selects a group. That group is then used for the next 5 trading days.
 
 ---
 
-## High Level Layers
+## High-Level Layers
 
-The architecture is easiest to understand in layers. Each layer has a clear responsibility and a clean input/output boundary.
+The architecture is organized in layers. Each layer has a clear purpose and a clean input/output boundary.
 
 ### Data Layer
 Responsible for building the weekly datasets and resetting weekly state.
@@ -27,14 +27,14 @@ Responsible for building the weekly datasets and resetting weekly state.
 ### Training Layer
 Responsible for generating variation performance data.
 
-- runs the mp1 loop for N cycles
+- runs the mp1 loop for N iterations
 - mp1_p1 executes variation tests in Excel across all 5 days
 - mp1_p2 reads results and generates the next parameter sets
 
 ### Decision Layer
 Responsible for selecting what will actually be used next week.
 
-This is not “training” anymore. This is where the system chooses what moves on and builds groups.
+This is no longer training. This is where the system chooses what moves on and builds groups.
 
 - mp1_p3 prunes variations into pruned tables using score + hard gates
 - mp2_p2 searches for multi-algorithm groups using recursion + threading
@@ -43,7 +43,7 @@ This is not “training” anymore. This is where the system chooses what moves 
 ### Daily Decision Layer
 Responsible for generating the daily ticker list from the chosen group.
 
-- pulls the latest daily snapshot (historical) data
+- pulls the latest daily snapshot data
 - runs the chosen group in Excel to generate “tomorrow” candidates
 - ranks and trims to a shortlist
 
@@ -58,7 +58,7 @@ Responsible for placing trades and managing exits.
 
 - allocates total capital across the final tickers
 - executes market open entries
-- exits using custom TSH rules (conservative profit capture / trailing behavior)
+- exits using custom TSH rules (conservative profit capture and trailing stops)
 
 ---
 
@@ -87,12 +87,12 @@ Table families:
 
 - final_groups
   the output of mp2_p2
-  gives the final two groups that will be used for testing 
+  gives the final two groups that will be used for testing
+  
+### variation_results_db
+This database holds the variation-level performance results produced by mp1_p1 across all cycles.
 
-### optuna_10a_data_db
-This database holds the variation test results produced by mp1_p1 across all cycles.
-
-The naming is legacy (outdated). Functionally, this is a weekly results store.
+In earlier versions of the system, this database appears under a legacy name tied to an abandoned Optuna-based approach. Functionally, it serves as the weekly results store used by the mp1 loop.
 
 Typical contents per algorithm:
 
@@ -115,7 +115,7 @@ Python commands Excel. Excel performs the per-ticker computation.
 
 ---
 
-## Module Map Inputs Outputs
+## Module Map (Inputs and Outputs)
 
 This section is the “wiring diagram” in text form. Each module is described as input -> process -> output.
 
@@ -229,8 +229,8 @@ process:
   - total runtime converges to the global budget
 
 output:
-- a ranked set of candidate groups for next week stored in final_groups_db
-- final selected group(s) to be used for weekday execution
+- a ranked set of candidate groups stored in the final_groups table
+- the selected group(s) saved for weekday execution
 
 ### daily_snapshot
 input:
@@ -245,7 +245,7 @@ output:
 
 ### mp2_p3_executor
 input:
-- selected group parameters (from mp2_p2 output located in final_groups_db)
+- selected group parameters (from the final_groups table)
 - dictionary_table (today’s snapshot)
 - Excel compute engine
 
@@ -267,7 +267,7 @@ input:
 process:
 - runs prompt-based news/narrative scoring
 - combines prompt scores with rank score
-- selects final tickers to trade (currently: top 4)
+- selects final tickers to trade (top 4)
 
 output:
 - final trade list for the next session
@@ -330,6 +330,4 @@ This weekday cycle repeats for 5 trading days using the group selected on the we
 - batching constraint: Excel processing is done in 250-ticker batches to stay stable and controllable
 - stability constraint: multi-day testing is required to avoid one-day overfit behavior
 - compute constraint: group discovery explores a tiny part of a massive amount of possible search space and must be bounded by time budgets and guardrails
-- iteration constraint: early development was done without IDE version control, so explicit iteration versions are limited but included separately in legacy_and_iteration
-
----
+- iteration constraint: early development was done without IDE version control, so explicit iteration versions are limited but included separately in `legacy_and_iteration`
