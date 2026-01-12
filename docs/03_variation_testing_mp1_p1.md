@@ -1,4 +1,4 @@
-# 03_variation_testing_mp1.md
+# Variation Testing
 
 ## What mp1 does
 mp1 is the weekly “variation testing” stage.
@@ -9,25 +9,20 @@ It takes the fixed 5-day dataset from mp0 (`DS_DAY1..DS_DAY5`) and tests 10 algo
 This stage does not train a predictive model like a neural network.
 The “learning” happens by mining a growing SQLite history of parameter trials and using it to propose the next parameter batch.
 
-In practice, mp1 P2 behaves like a history-aware hyperparameter optimizer:
+In practice, P2 uses accumulated historical results to guide parameter proposals:
 - It scores each parameter set using multi-day stability + confidence metrics (not just raw profit percentage).
 - It fits lightweight, per-parameter sampling bias from recent “good” regions.
 - It proposes new candidates, then enforces deduplication and diversity before pasting back to Excel.
 
-Key idea
-- The Excel workbook computes the trade logic.
-- Python orchestrates data loading, triggers the macro, and records results + metrics into SQLite.
-- P2 then proposes the next sets of parameters based on those 5-day metrics of the past variations tested.
-
 ## Components in this stage
-- **P1: 5-day cycling runner** (`run_cycling_program()`)
-- **Metrics recorder** (`record_day_results_and_finalize_if_needed()` → `_finalize_5d_metrics()`)
-- **P2: rank + recommend (optimizer loop)** (`run_p2_rank_and_recommend()`)
+- **P1: 5-day cycling runner** — executes the workbook across all five training days and records per-day outcomes
+- **Metrics recorder** — aggregates daily results into five-day stability and confidence metrics
+- **P2: rank and recommend** — selects strong parameter sets and proposes the next batch to test
 
 The Excel Cycling Macro handles:
 - Running each algorithm sheet logic on the currently loaded batch
 - Saving intermediate workbook state and moving through the workbook’s internal flow
-- Updating a completion cell (`O1`) so Python can detect completion
+- Updating a completion cell so Python can detect completion
 
 Python handles:
 - Feeding the next 53-row blocks into ControlSheet
@@ -40,13 +35,13 @@ Python handles:
 ## Data flow at a glance
 Input (from mp0)
 - `stocks_data.db`
-  - `DS_DAY1..DS_DAY5` (1000 tickers × 53-row blocks)
+  - `DS_DAY1..DS_DAY5` (1000 tickers * 53-row blocks)
 
 Execution engine
 - Excel workbook: `MakeMoneExcel3 working - Copy.xlsm`
 - Macro trigger cell: `S1`
 - Macro completion cell: `O1`
-
+  
 Output (for training + optimization)
 - `optuna_10A_data.db`
   - One table per algorithm (`MACD`, `EMA`, …, `RSI_Bollinger`)
@@ -87,12 +82,6 @@ The important “anchoring” rule
 - Days 2–5 update the same anchored rows (same `run_id`, same variation_number, same params).
 
 This guarantees that “5-day metrics” truly describe the same parameter set across all five day windows, not five unrelated rows.
-
-What the macro completion mechanism does
-- Python reads `initial_o1 = sheet.range("O1").value`
-- It triggers the macro: `S1 = 100`
-- It waits until `O1 != initial_o1`
-- This is a clean handshake that avoids timing guesses.
 
 Why batches exist
 - The workbook is designed to process a manageable number of stocks at a time.
@@ -140,7 +129,7 @@ Robust stability stats across 5 days
 - `buycount_mad_5d`
 - `buycount_cv_5d` (coefficient of variation)
 
-Confidence / “not luck” metric
+Confidence metrics
 - `wilson_lb_5d` = confidence-adjusted hit-rate; penalizes small sample sizes.
 
 Recency-weighted summary (Allows more recent patterns to weigh more)
@@ -243,4 +232,3 @@ Python treats the workbook as a deterministic black box:
 - Save structured results
 - Improve parameters using the saved results
 - Inputs datasets → Outputs results and metrics
-
