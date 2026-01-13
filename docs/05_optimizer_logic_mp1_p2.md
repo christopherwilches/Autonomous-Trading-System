@@ -1,31 +1,24 @@
-# 05_optimizer_logic_mp1_p2.md
+# Optimizer Logic
 
 This stage explains how mp1 P2 selects, ranks, and proposes new parameter sets for each algorithm based on historical performance.
 
 P2 is not a predictive model.
-It does not predict prices or learn a parametric function.
+It does not predict prices or fit a predictive model.
 
-Instead, it functions as a **history-aware hyperparameter optimizer** that adapts search behavior using stored trial results from previous weekly runs.
+Instead, it adjusts how parameters are proposed based on stored results from prior weekly runs.
 
 ---
 
-## Conceptual framing
-P2 has both classical grid search and full Bayesian optimization elements.
-
-It borrows ideas from:
-- Sequential model-based optimization
-- Multi-objective ranking
-- Exploration vs exploitation control
+## Optimization approach
+P2 combines structured parameter search with adaptive ranking and controlled exploration.
 
 But it remains intentionally lightweight, interpretable, and fully deterministic.
 
-The core idea:
-- Past parameter sets that demonstrated **stable, confident performance** define “good regions”
-- Future proposals are biased toward those regions, while preserving diversity and exploration
+Past parameter sets that demonstrated stable, confident performance define regions of interest. New proposals are biased toward those regions while preserving diversity and exploration.
 
 ---
 
-## What P2 optimizes (and what it does not)
+## What P2 optimizes and what it does not
 
 P2 optimizes:
 - Parameter stability across multiple days
@@ -147,7 +140,7 @@ This allows optimization to operate in a clean internal space while respecting w
 
 ## Deduplication and diversity enforcement
 
-This stage is important, because Excel enforces rounding and discrete steps, different internal samples can collapse into identical workbook parameters.
+This stage matters because Excel enforces rounding and discrete steps, which can cause distinct internal samples to collapse into identical workbook parameters.
 
 P2 prevents this via:
 
@@ -185,34 +178,7 @@ P2 only controls what parameters get tested next.
 
 ---
 
-## Why this is not classical ML
-This stage intentionally avoids:
-- Training differentiable models
-- Fitting probabilistic surrogate models
-- Gradient-based optimization
-
-Reasons:
-- The execution engine (Excel) is treated as a black box
-- The objective is multi-modal and non-smooth
-- Stability and confidence dominate raw optimization
-
-This makes lightweight, rule-driven optimization more appropriate than heavy ML.
-
----
-
-## Why this is still “learning”
-P2 adapts because:
-- Search behavior changes based on historical outcomes
-- Parameter regions gain or lose probability mass over time
-- Poor regions are implicitly abandoned
-- Good regions are explored more deeply
-
-This achieves the practical definition of learning without using a predictive model for now.
-
----
-
-## Relationship to later stages
-- mp1 P3 prunes based on these same metrics
+## Importance to later parts
+- mp1 P3 uses these metrics to prune variations
 - mp2 builds group-level behavior on top of optimized variations
-- Daily execution relies on P2 having suggested stable, improving parameter sets
-- 
+- Daily execution depends on P2 having produced stable parameter sets
