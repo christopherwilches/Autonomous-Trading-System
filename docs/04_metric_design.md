@@ -1,4 +1,4 @@
-# 04_metric_design.md
+# Metric Design
 
 This section explains **why each metric exists**, what it measures, and which failure mode it is designed to prevent.
 
@@ -10,8 +10,8 @@ They are later used by the optimizer (mp1 P2) and by the pruning stage (mp1 P3) 
 
 ---
 
-## Core Idea
-Markets are volatile, and a strategy that works on one day may fail the next even if nothing “breaks.”
+## Goal
+Markets are volatile, and a strategy that works on one day may fail the next even if nothing breaks.
 
 This metric system is therefore designed to:
 - Reward **consistency across days**
@@ -20,14 +20,12 @@ This metric system is therefore designed to:
 - Detect **overfitting via ticker concentration**
 - Preserve **recency awareness** without overprioritizing
 
-No single metric is trusted by it self.
-
 ---
 
 ## Metric families
 
 ### 1. Volume of evidence (how much data exists)
-These metrics account for the question: **Is there enough evidence to trust this result?**
+These metrics measure how much data supports a result.
 
 #### pooled_buys
 Total number of BUY decisions across all five days.
@@ -59,7 +57,7 @@ Limitation:
 ---
 
 ### 3. Robust daily stability metrics
-These answer: **Does this strategy behave similarly day to day?**
+These metrics measure day-to-day behavioral consistency.
 
 #### median_pp_5d
 Median of daily profit percentages across five days.
@@ -89,7 +87,7 @@ Usage:
 ---
 
 ### 4. Buy behavior stability metrics
-These answer: **Does the algorithm behave consistently in how often it trades?**
+These metrics measure consistency in trading frequency.
 
 #### buycount_med_5d
 Median number of buys per day.
@@ -111,7 +109,7 @@ Usage:
 ---
 
 ### 5. Confidence-adjusted performance
-These answer: **Is this performance statistically believable?**
+These metrics adjust performance for statistical confidence.
 
 #### wilson_lb_5d
 Wilson score lower bound of hit probability across five days.
@@ -132,7 +130,7 @@ Usage:
 ---
 
 ### 6. Recency-weighted summaries
-These answer: **Is the strategy adapting to current conditions?**
+These metrics emphasize recent behavior without discarding historical evidence.
 
 #### ew_scheme
 Default weights:
@@ -216,9 +214,9 @@ Only strategies that pass gates are ever ranked.
 
 ---
 
-## Relationship to later stages
-- mp1 P2 consumes these metrics to propose new parameters.
-- mp1 P3 uses them to prune aggressively.
-- mp2 later uses similar principles at the group level.
+## Importance to later stages
+- mp1 P2 uses these metrics to guide parameter proposals.
+- mp1 P3 applies them as pruning criteria.
+- mp2 applies related signals at the group level.
 
-These metrics are the foundation of the entire system.
+These metrics are used throughout the system to control optimization, pruning, and grouping.
