@@ -1,4 +1,4 @@
-# 07 — Group Synergy (MP2 Part 2)
+# Group Synergy
 
 This part explains the **group-building + synergy scoring** layer of MP2 Part 2.
 
@@ -6,7 +6,7 @@ Scope:
 - Recursive group construction (how algorithms are added)
 - Consensus intersection logic (what a “shared ticker” means)
 - Group evaluation metrics (PP, stability, conservative bounds, coverage, overfit control)
-- The **core guardrails** that control repeat factor and minimum amount of hits (profits) daily
+- The core guardrails that control repetition, stability, and minimum usable signal
 
 ---
 
@@ -14,83 +14,17 @@ Scope:
 
 ### Variation
 A single algorithm configuration exported by MP1 Part 3 into `pruned_*` tables.
-Each variation includes 5 day buy lists (`day1_buys_json..day5_buys_json`), where each buy row contains:
-- ticker, name, open, close
-- profit flag is normalized as `is_profit = 1 if close > open else 0`
+Each variation includes five days of historical buy decisions with associated profit outcomes.
 
 ### Group
-A set of **distinct algorithms** (no duplicates), each contributing exactly one variation:
-- `group = [(algo_idx, variation_identifier), ...]`
+A group is a combination of distinct algorithms, where each algorithm contributes exactly one variation.
 
-Group size is capped by `MAX_GROUP_SIZE` (in this program: 4).
+Group size is intentionally limited to keep combinations interpretable and the search space manageable.
 
 ### Consensus tickers by day
-For each day (1-5), the group maintains:
-- `consensus_by_day[d] = set of tickers that ALL current members bought on day d`
+For each day, the group tracks the set of tickers that all current members bought independently.
 
 This is the “shared ticker” definition used for selection and metrics.
-
----
-
-## Inputs and Precompute Maps in RAM
-
-MP2 loads variations from the 10 `pruned_*` tables, then precomputes fast primitives:
-
-### 1) Day buys set
-`day_buys_map[(algo_idx, ident, day)] -> set[ticker]`
-
-Meaning: “tickers bought by this variation on this day”.
-
-### 2) Day profit lookup
-`day_profit_map[(algo_idx, ident, day)][ticker] -> 0/1`
-
-Meaning: “if this variation bought ticker T on day D, did it win (close>open)?”.
-
-These maps are the performance-critical foundation of recursion:
-- recursion uses set intersections (`&`) and O(1) dict lookups for wins.
-
----
-
-## Recursive Group Builder (Core Engine)
-
-Entry point per starter variation:
-- seed group with one member
-- seed consensus sets from that member’s day buys
-
-Recursive function:
-`build(group, consensus_by_day, used_algos, hits, deadline=None)`
-
-### Recursion Invariants
-- `group` contains unique algorithm indices
-- `consensus_by_day[d]` is always the intersection of all member day buy sets for day d
-- Adding a member can only shrink (or keep) consensus sets
-- Example: if a new algo buys only 4 tickers, the entire group is limited by the tickers they share with the new algo
-
-### Base Termination (Structural)
-A branch terminates if there is no consensus left to evaluate:
-
-- If all days are empty consensus:
-  - return immediately
-
-This is the primary natural pruning mechanism:
-- intersections collapse quickly as group size grows.
-
-### Expansion Rule (Adding Members)
-To expand the current group, pick a next algorithm index not already in the group, then iterate its candidate variations.
-
-For each candidate `(next_algo, ident)`:
-- For each day `d`, compute:
-  - `inter = consensus_by_day[d] ∩ day_buys_map[(next_algo, ident, d)]`
-- If every day becomes empty (`has_any == False`), skip this candidate.
-- Otherwise:
-  - append member
-  - recurse with the updated `new_consensus`
-  - backtrack
-
-Ordering constraint:
-- only add algorithms with index greater than current max in the group
-  - guarantees deterministic enumeration
-  - avoids permutations of the same combination AKA wasted resources calcualting the same groups
 
 ---
 
@@ -99,30 +33,16 @@ Ordering constraint:
 A group is evaluated once it has at least 2 members and at least one non-empty consensus day.
 
 ### Daily buys / hits
-For each day `d`:
-
-- `buys_d = |consensus_by_day[d]|`
-
-- `hits_d` is computed as:
-  - for each ticker `t` in consensus tickers that day:
-    - count a win if **ANY member** has profit flag 1 for `(member, day, ticker)`
+For each day, the group records how many shared tickers were selected and how many of those resulted in a profit.
+A shared pick is considered successful if any member achieved a profit on that ticker.
 
 This choice makes the group:
 - strict for selection (must be bought by all)
 - flexible for win credit (any member’s win counts)
 
-Outputs:
-- `day_buys = [b1..b5]`
-- `day_hits = [h1..h5]`
-- `daily_pp[d] = 100 * hits_d / buys_d` (0 if buys_d = 0)
+Daily results are then aggregated into a week-level performance view, combining all shared picks across the five days.
 
-### Weekly pooled PP
-Let:
-- `pooled_buys = sum(day_buys)`
-- `pooled_hits = sum(day_hits)`
-
-Then:
-- `pooled_pp = 100 * pooled_hits / max(1, pooled_buys)`
+This pooled view provides a more reliable signal than any single day, especially when daily overlap sizes vary.
 
 ---
 
@@ -131,14 +51,14 @@ Then:
 The system builds `DAY_DIFFICULTY_WEIGHTS[1..5]` from baseline win rates in `DS_DAY1..DS_DAY5`.
 It is meant to give priority to days that had lower overall profit rate, meaning the group that can perform better those days is more favorable
 
-Mechanism:
-- compute baseline day win rate (close>open) from the dataset’s “first OHLC row per ticker”
-- compare each day’s baseline to the average baseline
-- derive weight: `w = 1 + k*(avg_wr - day_wr)`
-- clamp weights to a sane band (0.5 .. 1.5)
+Not all trading days are equally difficult.  
+Some days naturally produce higher win rates across the market, while others are more challenging.
 
-Used metric:
-- `weighted_pp = avg( daily_pp[d] * weight[d] )`
+To account for this, group performance is evaluated with awareness of day difficulty:
+- stronger performance on harder days is weighted more favorably
+- performance on unusually easy days is naturally tempered
+
+This prevents score inflation caused by favorable market conditions and rewards robustness across regimes.
 
 Purpose:
 - prevent score inflation on “easy” days
@@ -148,109 +68,68 @@ Purpose:
 
 ## Stability and Robustness Metrics
 
-From `daily_pp` (5 values):
-- `median_pp` (middle of sorted daily PP)
-- `second_worst_pp` (2nd lowest daily PP)
-- `mad_pp = avg(|pp_d - median_pp|)` across 5 days
-- `iqr_pp = sorted_pp[3] - sorted_pp[1]`
+Groups are evaluated not just on average performance, but on how consistently that performance holds across the week.
 
-From daily buy counts:
-- `mean_buys = avg(day_buys)`
-- `cv_buys = stdev(nonzero_buys) / mean_buys` (0 if insufficient data)
+Key stability signals include:
+- how tightly daily results cluster around a central tendency
+- resistance to sharp swings between strong and weak days
+- whether performance decays or improves over time
 
-Conservative bound:
-- `wilson_lb` = Wilson lower bound of pooled hit-rate (z = 1.96), expressed in percent
-  - punishes small-sample “perfect” overlaps
-  - boosts large-sample consistent performance
-
-Trend:
-- `pp_slope` = linear regression slope of daily PP across days 1..5
-  - negative slope penalized (decay)
-  - positive slope lightly rewarded
+In addition, results are adjusted conservatively to account for sample size.
+Groups with very few shared trades are treated with caution, even if their raw performance looks strong.
 
 ---
 
-## Overfitting Control: Repeat Factor
+## Overfitting Control: Repetition
 
-Let:
-- `weekly_set = union of all consensus tickers across days`
-- `unique_consensus = |weekly_set|`
-- `total_consensus_buys = sum(day_buys)`
+A key failure mode in group construction is over-reliance on a small set of recurring names.
 
-Define:
-- `repeat_factor = total_consensus_buys / max(1, unique_consensus)`
+Groups are therefore penalized if the same tickers dominate consensus selections across multiple days.
+Healthy groups demonstrate breadth over time, rather than repeatedly exploiting a narrow subset of symbols.
 
-Interpretation:
-- ~1.0 means consensus picks are mostly unique across the week
+- 1.0 means consensus picks are mostly unique across the week
 - higher values mean the same names repeat across days (over-concentration)
 - the score penalizes repeat_factor above a threshold (quadratic)
 
 ---
 
-## Coverage Control: “Enough picks, not too many”
+## Coverage Control
 
-Coverage term is designed to:
-- avoid tiny overlaps that look great but trade nothing
-- avoid spray overlaps that stop being “consensus”
+Coverage is used to ensure that consensus selections are actually tradable.
 
-Components:
-- `coverage_core = 6 * log1p(mean_buys)` (with mild capping)
-- `sweet_spot_bonus(mean_buys)` shaped to prefer roughly ~14/day
-- `hard_over_penalty` quadratic if any single day exceeds 20 consensus buys
+The system discourages:
+- extremely small overlaps that produce unreliable signals
+- overly large overlaps that dilute the idea of consensus
 
-This enforces a usable consensus list size.
+Instead, it favors a consistent, manageable number of shared picks that can realistically be acted upon.
 
 ---
 
-## Group Score (Synergy Score)
+## Guardrails that shape the search
 
-The score combines performance + conservative floor + usability and subtracts instability + overfit.
+Only a small number of hard constraints affect group construction:
+- groups must maintain shared selections
+- group size is limited to preserve interpretability and tractability
 
-### Profit base
-- `profit_base = 0.60*weighted_pp + 0.25*median_pp + 0.15*second_worst_pp`
-
-### Penalties / boosts
-- `trend_penalty = 6 * max(0, -pp_slope)`
-- `stability_penalty = 0.25*mad_pp + 0.18*iqr_pp + 0.10*cv_buys*100 + trend_penalty`
-- `repeat_penalty = 25 * max(0, repeat_factor - 1.20)^2`
-- `trend_boost = 3 * max(0, pp_slope)`
-
-### Final score
-- `score = profit_base + 0.80*wilson_lb + coverage_term + trend_boost - stability_penalty - repeat_penalty`
-
-This score is the primary ranking used for Top-K and later final selection.
+All other signals influence ranking rather than exploration, ensuring promising combinations are not prematurely excluded.
 
 ---
 
-## Guardrails That Matter (Branch Killers)
+### Retention logic
 
-These are the *meaningful* pruning rules that affect recursion coverage:
+Groups are retained only after exploration is complete.
 
-1) **No-consensus termination**
-- if all 5 consensus sets are empty, the branch ends
+Rather than pruning during construction, the system:
+- explores broadly
+- records high-quality candidates
+- then applies stability-first selection
 
-2) **Daily hit floor** (size ≥ 2)
-- requires `hits_d >= 8` for each day (for d=1..5)
-- eliminates weak or luck-based overlaps early
+Final candidates are chosen from the strongest-performing groups of each size, with preference given to those that combine:
+- consistent week-level performance
+- conservative confidence bounds
+- stable behavior across days
 
-3) **Max group size**
-- recursion stops expanding when `size_now >= MAX_GROUP_SIZE`
-
-Everything else is either:
-- a score penalty (does not prune),
-- or an eligibility filter for Top-K selection (does not prune recursion).
-- This is because even small rules that affect recursion (`build()`) can completely change the combinations tested, and can potentially stop exploration of groups with potential.
-
----
-
-## Candidate Retention (Top-K + Final Pick)
-
-Groups are only *retained* for final consideration when size is 3 or 4.
-
-Retention pipeline:
-1) Build the `entry` struct (pp, score, daily_stats, buy_stats, stability metrics, consensus sets)
-2) Feed into Top-K accumulator for that size
-3) After the run, choose final winners from Top-K using a bell-curve + stability filter
+This separation ensures promising combinations are not prematurely excluded.
 
 Key property:
 - retention rules do not affect recursion coverage
@@ -258,20 +137,9 @@ Key property:
 
 ---
 
-## Persistence of Results
-
-During the run:
-- The current best-by-size (SIZE3 / SIZE4) can be continuously upserted into `extra_big_groups`
-
-At the end:
-- final selected winners are persisted and exported into the workbook output area
-- consensus tickers are stored explicitly per day, including profit flags
-
----
-
 ## Summary
 
-MP2 Group Synergy is:
+Group Synergy focuses on the core logic of MP2 P2, including:
 - a recursive intersection engine that enforces “all members/algos agree” on selection
 - a scoring system that rewards:
   - hard-day performance,
