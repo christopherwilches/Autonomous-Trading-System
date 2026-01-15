@@ -1,4 +1,4 @@
-# 11_limitations_and_future.md
+# Limitations and Future
 
 ## Purpose
 
@@ -22,10 +22,11 @@ I began this project in **9th grade** without prior background in
 
 I also had **no formal mentorship** while building the system.
 Most learning came from self-study, experimentation, and iteration.
+Most progress came from repeated trial, failure, refactoring, and rebuilding.
 
-**Why this matters**
+**What this led to**
 - Some parts of the system are more primitive than they would be with earlier exposure to professional tooling and software architecture
-- Some design redundancy exists because I built and rebuilt components as my understanding improved, or continue to use redundancies
+- Some redundancy exists because major components were rebuilt multiple times as my understanding deepened, and stability was prioritized over elegance
 - Some edge-case risks may still exist because there was no senior engineer or professional reviewing decisions and implementation early
 
 ---
@@ -33,9 +34,9 @@ Most learning came from self-study, experimentation, and iteration.
 ### 2) Tooling and workflow constraints
 
 Early development used simple tools, including coding in basic editors like Notepad, and running it as a python file.
-There was limited version control capabilities in the chosen editors and discipline at the beginning.
+Version control and structured testing were introduced later, after the core system had already grown in complexity.
 
-**Why this matters**
+**Impact on the system**
 - Fewer reliable checkpoints for “known good” versions early on
 - More time spent rebuilding when something broke
 - Slower debugging progress compared to a full IDE plus structured tests from day one
@@ -45,9 +46,9 @@ There was limited version control capabilities in the chosen editors and discipl
 ### 3) Legacy platform cost
 
 A major portion of early development used Google Sheets as a core environment before shifting toward a more programmatic pipeline using Excel and Notepad python scripts.
-This shift was due to realizing Google Sheets' limited capabilities for a early version of the system I was already planning on creating at that point
+This shift was due to realizing Google Sheets' limited capabilities for a early version of the system I had at that point, forcing me to move.
 
-**Why this matters**
+**Practical impact**
 - A large chunk of time produced learning and prototypes in Google Sheets, but not reusable long-term infrastructure that is still being used today
 - Some earlier progress does not translate directly into today’s architecture, even though it shaped later design decisions
 
@@ -58,7 +59,7 @@ This shift was due to realizing Google Sheets' limited capabilities for a early 
 During development, hardware limitations affected design choices. I am using legacy hardware with the PC I currently use to run my programs, requiring me to use batching
 and smaller number of threads, and RAM considerations when moving large maps of parameters and group testing in mp2_p2. 
 
-**Why this matters**
+**Impact on the system**
 - Forced batching strategies and tighter memory usage
 - Limited practical parallelism during heavy runs
 - Increased runtime made full exploration of larger parameter and group spaces unrealistic in earlier stages
@@ -73,8 +74,7 @@ Excel provided rapid iteration and visibility, but it also created limits.
 - Excel is not a high-performance execution engine for large-scale experimentation
 - Recalculation overhead and workbook structure constraints affect scaling
 - Some complexity exists mainly to work around spreadsheet constraints rather than because the trading logic requires it
-- Issues with cell references with handeling complex algorithms made of hundreds of formulas caused major delays, and slowdowns associated with the limitations
-  of my PC occurred in Excel as well, causing further delays
+- Managing hundreds of interdependent formulas across replicated algorithm blocks caused frequent reference errors and significant iteration slowdowns, amplified by hardware limits
 - Any fixes or changes to any part of my algorithm would result in me having to manually change each formula affected in all 8 of the variations in the algorithm
   block (since my algorithm block has 8 identical copies of the same algorithm, with different references to a different set of parameters, but each seperate). 
 - **No reliable AutoSave / version history for workbooks:** I still don’t have consistent Excel AutoSave because enabling it would require storing the workbook in an externally managed OneDrive account (not under my control). As a result, workbook changes rely on manual saves and local backups by making copies of the workbook constantly, which due to a lack of experience, I often didn't have a backup, and multiple times lost progress and slowed iteration down.
@@ -102,8 +102,7 @@ The qualitative screen uses manual prompts for Modules A B C D.
 - Manual review introduces the possibility of ticker input errors or mismatch of prompts, or handling the process of compiling the scores.
 - Manual review does not scale well to hundreds of tickers without automation
 
-This is intentionally manual for now.
-Automation is planned once APIs are selected and the entire framework for that program is done.
+This layer is intentionally manual at this stage to preserve judgment and accountability. Automation is planned once reliable data sources and scoring standards are finalized.
 
 ---
 
@@ -139,6 +138,8 @@ Assistive outputs were used as reference material and were rewritten, tested, or
 
 Even with assistive tools, development remained slow and difficult due to lack of proper training.
 Debugging across Excel, Python, SQLite, and multi-threaded execution required manual iteration, testing, and long-run validation.
+
+Assistive tools accelerated learning and iteration, but did not replace learning or testing; all core logic was implemented, tested, and revised by hand.
 
 ---
 
@@ -256,18 +257,3 @@ Target end state
 - daily selection becomes a fast decision step
 - heavy testing becomes a background research cycle run on a schedule
 - the live system benefits from accumulated evidence instead of repeating the same tests
-
----
-
-## What this project is and is not
-
-This repository is a systems engineering and research project.
-It is not a claim of guaranteed profits.
-Market behavior changes and all live trading involves risk.
-
-The value of the project is the architecture
-- structured experimentation (MP1 variation testing)
-- reproducible evaluation across datasets
-- measurable selection logic using explicit metrics
-- safety-driven execution design (TSH, caps on capital)
-- a clear roadmap to scale into a more professional research engine to a fully black-box research engine
