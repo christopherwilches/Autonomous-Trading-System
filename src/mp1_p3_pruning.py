@@ -1,5 +1,5 @@
 """
-MP1 — Part 3: Export pruned variations (DB → WB2)
+MP1 — Part 3: Export pruned variations (DB -> WB2)
 
 Selects and deduplicates the best variations per algorithm from the Optuna results DB,
 ensures minimum coverage / global minimum counts, writes pruned_* tables into stocks_data.db,
@@ -12,13 +12,13 @@ Output: pruned_<ALGO> tables (stocks_data.db) + WB2 pasted blocks
 def export_variations_to_excel():
     import json, math, sqlite3, time
     import xlwings as xw
-    EXCEL_FILE = r"<REDACTED_PATH>/MakeMoneyExcel3.xlsm"
+    EXCEL_FILE = r"<REDACTED_PATH>/WB1"
     optuna_db_path = r"<REDACTED_PATH>/optuna_data.db"
     # --- Open books/sheets
     wb1 = xw.Book(EXCEL_FILE)
     control_sheet = wb1.sheets["ControlSheet"]
 
-    WB2_FILE = r"<REDACTED_PATH>/Combination Grouper MME3.xls.xlsm"
+    WB2_FILE = r"<REDACTED_PATH>/WB2"
     wb2 = xw.Book(WB2_FILE)
     output_sheet = wb2.sheets["ControlSheet"]
 
@@ -78,7 +78,7 @@ def export_variations_to_excel():
     except Exception:
         pass
 
-    _base = r"C:/testpy"
+    _base = r"<REDACTED_PATH>
     _names = [
         "optuna_10A_data",          
         "optuna_10A_data.db",
@@ -120,7 +120,7 @@ def export_variations_to_excel():
         # Hard fail with clear message
         raise RuntimeError(
             "P3 source DB not found: none of the expected algo tables exist in the searched locations. "
-            "Ensure optuna_10A_data.* is present under C:/testpy or set optuna_db_path correctly."
+            "Ensure optuna_10A_data.* is present under r"<REDACTED_PATH>" or set optuna_db_path correctly."
         )
 
     SOURCE_DB_FILE = _best[0]
@@ -128,7 +128,7 @@ def export_variations_to_excel():
     cur = conn.cursor()
     print(f"[P3] Source DB chosen: {SOURCE_DB_FILE} (algo tables found={_best[1]})")
 
-    STOCKS_DB_FILE = r"C:/testpy/stocks_data.db"
+    STOCKS_DB_FILE = r"<REDACTED_PATH>/stocks_data.db"
     sd_conn = sqlite3.connect(STOCKS_DB_FILE)
     sd_cur = sd_conn.cursor()
 
