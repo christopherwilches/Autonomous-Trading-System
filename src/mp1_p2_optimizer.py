@@ -19,7 +19,7 @@ import statistics as stats
 from collections import Counter
 
 # File paths
-EXCEL_FILE = r"<REDACTED_PATH>/MakeMoneyExcel3.xlsm"
+EXCEL_FILE = r"<REDACTED_PATH>/WB1"
 optuna_db_path = r"<REDACTED_PATH>/optuna_data.db"
 
 import uuid
@@ -40,19 +40,8 @@ PRICE_START_COL = 59          # BG: [Date, Open, High, Low, Close, Volume]
 PRICE_WIDTH     = 6
 VAR_BLOCK_FIRST_COLS = [11, 17, 23, 29, 35, 41, 47, 53] 
 
-# Parameter settings
-PARAM_RANGES = {
-    "MACD": [(5, 10, 1), (12, 18, 1), (5, 10, 1), (-2.5, 6, 0.05), (1, 3, 1), ["None", "Vol"], (3, 25, 0.1), (1, 10, 1), (0.00, 0.20, 0.01)],
-    "EMA": [(6, 15, 1), (1, 3, 1), ["None", "Vol"], (1, 30, 1), (1, 10, 1)],
-    "RSI": [(8, 14, 1), (20, 35, 1), ["None", "Vol"], (1, 30, 1), (1, 10, 1), (1, 1.2, 0.05), (1, 1.3, 0.05)],
-    "Breakout": [(-50, -5, 2.5), ["None", "Vol"], (1, 30, 1), (1, 10, 1), (8, 18, 1)],
-    "ADX": [(10, 14, 1), (10, 30, 1), (60, 100, 1), ["None", "Vol"], (1, 30, 1), (1, 10, 1), ["ADX Only", "ADX + DI+ > DI-"]],
-    "Volatility": [(10, 19, 1), (1, 3, 0.1), (3, 7, 0.1), ["None", "Vol"], (1, 30, 1), (1, 10, 1), (0, 1, 0.1), (1, 4, 0.2)],
-    "SMA": [(6, 12, 1), (2, 8, 1), ["None", "Vol"], (1, 30, 1), (1, 10, 1)],
-    "Bollinger_Bands": [(6, 17, 1), (-7.5, 2.5, 0.05), ["None", "Vol"], (1, 30, 1), (1, 10, 1), (1, 3, 1)],
-    "EMA_MACD_Combo": [(6, 15, 1), (16, 30, 1), (5, 12, 1), (-0.8, 1, 0.05), ["None", "Vol"], (1, 30, 1), (1, 10, 1), (-0.8, 2, 0.05), (2, 6, 1)],
-    "RSI_Bollinger": [(8, 14, 1), (-7.5, 2.5, 0.05), (1, 3, 1), ["None", "Vol"], (1, 30, 1), (1, 10, 1), ["None", "RSI"], (20, 35, 1), (1, 1.2, 0.05), (1, 1.3, 0.05)]
-}
+# Parameter ranges are omitted for privacy
+PARAM_RANGES = {}
 
 CONTROL_ORDER = [
     "MACD","EMA","RSI","Breakout",
@@ -1379,7 +1368,7 @@ def run_p2_rank_and_recommend():
             _write_params_to_excel(control_sheet, algo_name, new8)
 
         wb.save()
-        print("P2 complete: DB-scored (5-day) → next 8 params pasted to Excel (UI order).")
+        print("P2 complete: DB-scored (5-day) -> next 8 params pasted to Excel (UI order).")
     finally:
         conn.close()
 
