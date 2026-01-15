@@ -19,7 +19,7 @@ import xlwings as xw
 import statistics as stats
 
 # Paths / constants
-EXCEL_FILE = r"<REDACTED_PATH>/MakeMoneyExcel3.xlsm"
+EXCEL_FILE = r"<REDACTED_PATH>/WB1"
 DB_FILE = r"<REDACTED_PATH>/stocks_data.db"
 optuna_db_path = r"<REDACTED_PATH>/optuna_data.db"
 
