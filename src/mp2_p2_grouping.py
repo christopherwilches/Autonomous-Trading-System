@@ -32,7 +32,7 @@ thread_local_data = threading.local()
 heartbeat_stop = threading.Event()
 DB_FILE = r"C:/REDACTED/stocks_data.db"
 HEALTH_LOG_PATH = r"C:/REDACTED/health_mp2_p2.txt"
-WB2_FILE = r"C:/REDACTED/Combination Grouper MME3.xls.xlsm"
+WB2_FILE = r"C:/REDACTED/WB2"
 
 HEALTH_INTERVAL_SEC = 600
 
@@ -89,12 +89,11 @@ _algo_stats = {
     #   "threads": 0,
     #   "timeouts": 0,
     #   "runtime_sec": 0.0,
-    #   "sum_pp": 0.0,          # averages over starters (variations)
-    #   "sum_tickers": 0.0      # averages over starters (variations)
+    #   "sum_pp": 0.0,        
+    #   "sum_tickers": 0.0      
     # }
 }
 _algo_stats_lock = threading.RLock()
-
 
 def run_mp2_general_group_tester():
     global group_size_counter, top_size_counter
