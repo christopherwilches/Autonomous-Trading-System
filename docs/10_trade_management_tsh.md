@@ -1,4 +1,4 @@
-# 10 Trade management with strict TSH
+# Trade management with TSH
 
 ## Purpose
 This stage handles live position management after entries are placed using the tickers from the daily execution logic.
@@ -6,12 +6,10 @@ Its goal is to let trades develop naturally, then lock in a profit using a stric
 deterministic trailing-stop-high model that avoids premature exits and prevents
 potential winners from falling back down and losing money.
 
-This part documents the **behavioral model**, not a predictive system.
-
 ---
 
 ## High-level flow
-- Positions are opened at market open using notional market orders
+- Positions are opened near market open using marketable orders sized by notional allocation
 - Each symbol is assigned a fixed capital allocation
 - A strict TSH model manages exits for the rest of the session
 - No discretionary exits exist
@@ -25,73 +23,66 @@ Each position receives a target percentage based on its entry price bucket.
 Lower-priced stocks receive wider targets  
 Higher-priced stocks receive tighter targets  
 
-This normalizes expected intraday movement across price ranges, accounting for smaller predicted movements for larger stocks.
+This normalizes typical intraday movement across price ranges. Lower-priced names tend to move in wider percentages; higher-priced names tend to move in tighter percentages.
 
 The selected value is referred to as **x**.
 
 ---
 
-## Core variables
-- **E** = entry price (actual filled price)
-- **x** = target percentage
-- **T** = target price = `E * (1 + x)`
-- **trailing_pct** = `x / 2`
-- **TA** = trailing amount (fixed dollars) = `E * trailing_pct`
-- **H** = highest observed price after arming
-- **F** = enforced trailing floor
+## Core terms
+- **E**: entry price (actual fill)
+- **x**: target percentage (chosen from an entry-price bucket)
+- **T**: target price (entry price plus x percent)
+- **trailing_pct**: trailing percentage (set to half of x)
+- **TA**: trailing amount in dollars (entry price times trailing_pct)
+- **H**: highest observed price after arming
+- **F**: active trailing floor used for exit decisions
 
 ---
 
-## Phase 1: not armed
-- If price < **T**
-- No exits are allowed
-- No stop-loss
-- No trailing logic
-- Position is allowed to fluctuate freely
+## Before arming
+While price remains below the target price **T**:
+- the system does not exit
+- there is no stop-loss or trailing behavior
+- the position is allowed to fluctuate freely
 
 Rationale:
-This prevents early exits caused by noise and ensures only real momentum
-activates trade management.
+This avoids selling on noise. Trade management only activates after the move reaches the target threshold.
 
 ---
 
 ## Arming condition
-The model arms the first time: 
-price >= T
+The model arms the first time the price reaches or exceeds the target price **T**.
 
 On arming:
-- `triggered = True`
-- `H = price`
+- the high watermark **H** is initialized to the current price
+- the position transitions into active trailing management
 
 From this point forward, the position is actively managed.
 
 ---
 
-## Phase 2: armed trailing logic
-After arming, the model updates continuously.
+## After arming (trailing management)
 
 ### High watermark
-If: price > H
+After arming, the system tracks a running high **H**. If a new high is reached, **H** is updated immediately.
 
-Then: H = price
+### Trailing floor
+The trailing floor **F** is computed from the high watermark and the fixed trailing amount **TA**:
 
-### Floor computation
-The trailing floor is computed as:
-
-raw_floor = H - TA
-F = max(T, raw_floor)
+- start with a raw floor of **H minus TA**
+- enforce a minimum floor at the target price **T**
+- use the higher of the two as **F**
 
 Properties:
-- The floor never drops below the target price
-- The floor only moves upward
-- Gains are locked progressively as new highs form
+- **F** never drops below **T**
+- **F** only moves upward as **H** rises
+- gains are locked progressively as new highs form
 
 ---
 
 ## Exit rule
-An exit is triggered immediately when:
-
-price <= F
+An exit is triggered immediately when the current price falls to the trailing floor **F** (or below).
 
 Action:
 - Submit a market sell for the full filled quantity
@@ -103,15 +94,13 @@ Action:
 ## Why the trailing amount is fixed dollars
 Trailing distance is computed from the **entry price**, not the current price.
 
-This prevents the trailing distance from expanding during strong rallies and
-keeps giveback proportional to the original open price.
+This prevents the trailing distance from expanding during strong rallies and keeps allowable giveback proportional to the entry price.
 
 ---
 
 ## Price feed behavior
-- When SIP NBBO data is used:
-  - The model tracks the **bid** price
-  - This reflects the realistic sellable price
+- With SIP NBBO:
+  - the system tracks the **bid** as the sellable reference price
 - If bid is unavailable:
   - The ask is used as a fallback
 - When IEX trade data is used:
@@ -145,9 +134,7 @@ keeps giveback proportional to the original open price.
 ---
 
 ## Design intent
-- The entire goal of this project to generate guarenteed profits. This custom market strategy
-  allows for profits far higher than its predicted percentage, but is built to quickly sell once it starts
-  dropping from its predicted high to guarentee profits, not risk and try to maximize profit amount
-- Fully deterministic behavior
+- Lock in gains after a target move is achieved, rather than letting winners round-trip
+- Deterministic behavior with no discretionary exits
 - No predictive logic inside the execution layer
-```
+- Favor repeatable intraday outcomes over maximizing any single trade
